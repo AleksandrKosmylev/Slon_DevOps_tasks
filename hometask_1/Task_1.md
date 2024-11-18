@@ -6,7 +6,9 @@ echo "$(ip route get 8.8.8.8 | grep -oP 'src \K\S+')"
 
 ```
 mkfifo named_pipe
+echo "$(ss -plnt)"
 ss -plnt > named_pipe & cat named_pipe > output.txt
+
 ```
 3. При помощи именованного пайпа заархивировать всё, что в него отправляем.
 Например, содержимое файла /var/log/messages
@@ -21,8 +23,10 @@ tar -czvf archive.tar.gz -T archive_pipe
 4. Вывести дату в unixtime
 На вход команды date через пайп подать свой формат выводимой даты 
 ```
-echo "$(date '+%Y-%m-%d %H:%M:%S')" | xargs -I {} date -d "{}" +%s
+echo "$(date '+%Y-%m-%d %H:%M:%S')"
 
+date '+%Y-%m-%d %H:%M:%S' > /tmp/named_pipe &
+timestamp=$(cat /tmp/named_pipe | xargs -I {} date -d "{}" +%s)
 ```
 
 5. При помощи HEREDOC записать в файл многострочное сообщение
